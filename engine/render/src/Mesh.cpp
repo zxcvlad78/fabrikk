@@ -1,5 +1,6 @@
 #include <fabrikk/render/Mesh.hpp>
-
+#include <iostream>
+#include <utility>
 
 namespace fabrikk {
 void Mesh::use_shader() const {
@@ -54,10 +55,10 @@ Mesh& Mesh::operator=(Mesh&& other) noexcept {
 }
 
 void Mesh::draw() const {
-    if (use_blend_) { 
-        glEnable(GL_BLEND);
-    }
+    if (blend_use_) glEnable(GL_BLEND);
     else glDisable(GL_BLEND);
+    glBlendFunc(blend_sfactor_, blend_dfactor_);
+
     use_shader();
     glBindVertexArray(VAO_);
     glDrawArrays(GL_TRIANGLES, 0, vertex_count_);
@@ -70,6 +71,12 @@ GLuint Mesh::shader_program() const { return shader_program_; }
 void Mesh::color(const vec4& c) { color_ = c; }
 vec4 Mesh::color() const { return color_; }
 
-void Mesh::use_blend(const bool blend) { use_blend_ = blend; }
-bool Mesh::use_blend() const { return use_blend_; }
+void Mesh::blend_use(const bool blend) { blend_use_ = blend; }
+bool Mesh::blend_use() const { return blend_use_; }
+
+void Mesh::blend_sfactor(const GLenum factor) { blend_sfactor_ = factor; }
+GLenum Mesh::blend_sfactor() const { return blend_sfactor_; }
+
+void Mesh::blend_dfactor(const GLenum factor) { blend_dfactor_ = factor; }
+GLenum Mesh::blend_dfactor() const { return blend_dfactor_; }
 }
