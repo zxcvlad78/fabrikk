@@ -1,0 +1,97 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/out/build/${presetName}"
+        },
+
+        {
+            "name": "windows-vs-base",
+            "hidden": true,
+            "inherits": "base",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            },
+            "generator": "Visual Studio 17 2022",
+            "architecture": "x64",
+            "environment": { "VSLANG": "1033" }
+        },
+        {
+            "name": "unix-ninja-base",
+            "hidden": true,
+            "inherits": "base",
+            "condition": {
+                "type": "inList",
+                "string": "${hostSystemName}",
+                "list": ["Linux", "Darwin"]
+            },
+            "generator": "Ninja"
+        },
+        {
+            "name": "all-ninja-base",
+            "hidden": true,
+            "inherits": "base",
+            "generator": "Ninja",
+            "environment": { "VSLANG": "1033" }
+        },
+
+        {
+            "name": "debug",
+            "displayName": "Debug",
+            "inherits": ["windows-vs-base", "unix-ninja-base"],
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+        },
+        {
+            "name": "release",
+            "displayName": "Release",
+            "inherits": ["windows-vs-base", "unix-ninja-base"],
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+        },
+
+        {
+            "name": "debug-ninja",
+            "displayName": "Debug (Ninja)",
+            "inherits": "all-ninja-base",
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+        },
+        {
+            "name": "release-ninja",
+            "displayName": "Release (Ninja)",
+            "inherits": "all-ninja-base",
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "Debug",
+            "configurePreset": "debug",
+            "configuration": "Debug",
+            "jobs": 16
+        },
+        {
+            "name": "Release",
+            "configurePreset": "release",
+            "configuration": "Release",
+            "jobs": 16
+        },
+        {
+            "name": "Debug-Ninja",
+            "configurePreset": "debug-ninja",
+            "jobs": 16
+        },
+        {
+            "name": "Release-Ninja",
+            "configurePreset": "release-ninja",
+            "jobs": 16
+        }
+    ]
+}

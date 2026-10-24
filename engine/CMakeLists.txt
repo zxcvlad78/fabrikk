@@ -1,0 +1,6 @@
+add_subdirectory(app)
+add_subdirectory(assets)
+add_subdirectory(core)
+add_subdirectory(ecs)
+add_subdirectory(platform)
+add_subdirectory(render)
