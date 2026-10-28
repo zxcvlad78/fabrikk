@@ -1,9 +1,7 @@
 find_package(OpenGL REQUIRED)
 
 add_library(fabrikk_render STATIC
-    src/Mesh.cpp
     src/ShaderProgram.cpp
-    src/render.cpp
 )
 
 target_include_directories(fabrikk_render PUBLIC
