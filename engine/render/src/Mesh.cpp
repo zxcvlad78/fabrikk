@@ -7,8 +7,19 @@ void Mesh::use_shader() const {
     if (shader_program_ == 0) return;
     glUseProgram(shader_program_);
     GLint color_i = glGetUniformLocation(shader_program_, "fuColor");
-    if (color_i < 0) return; 
+    if (color_i < 0) return;
     glUniform4f(color_i, color_.x, color_.y, color_.z, color_.w);
+
+    GLint transform_i = glGetUniformLocation(shader_program_, "fuTransform");
+    if (transform_i >= 0) {
+        static const float identity[16] = {
+            1.f, 0.f, 0.f, 0.f,
+            0.f, 1.f, 0.f, 0.f,
+            0.f, 0.f, 1.f, 0.f,
+            0.f, 0.f, 0.f, 1.f
+        };
+        glUniformMatrix4fv(transform_i, 1, GL_FALSE, identity);
+    }
 }
 
 Mesh::Mesh(const std::vector<float>& vertices) {

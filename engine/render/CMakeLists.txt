@@ -3,6 +3,7 @@ find_package(OpenGL REQUIRED)
 add_library(fabrikk_render STATIC
     src/Mesh.cpp
     src/ShaderProgram.cpp
+    src/render.cpp
 )
 
 target_include_directories(fabrikk_render PUBLIC
@@ -12,6 +13,8 @@ target_include_directories(fabrikk_render PUBLIC
 fabrikk_set_target_options(fabrikk_render)
 
 target_link_libraries(fabrikk_render PUBLIC
+    fabrikk_core
     fabrikk_platform
+    EnTT::EnTT
     OpenGL::GL
 )

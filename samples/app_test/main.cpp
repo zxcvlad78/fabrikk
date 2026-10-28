@@ -1,10 +1,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <fabrikk/app/App.hpp>
+#include <fabrikk/render/sys/render.hpp>
 #include <fabrikk/render/ShaderProgram.hpp>
 #include <iostream>
 #include <vector>
 #include <fabrikk/render/Mesh.hpp>
+#include <fabrikk/render/cmp/Mesh.hpp>
 
 const char *vss =
     "#version 330 core\n"
@@ -47,14 +49,17 @@ int main() {
     triangle_mesh1->shader_program(shader_program);
     triangle_mesh1->color({1.f, 0.1f, 0.8f, 0.5f});
 
-    app.simulation.emplace(
-        fabrikk::SimulationPhase::Render,
-        {"app_test:render",
-            [&triangle_mesh, &triangle_mesh1](entt::registry& reg) {
-                triangle_mesh->draw();
-                triangle_mesh1->draw();
-            }
-        });
+    auto& reg = app.simulation.registry();
+    auto e0 = reg.create();
+    reg.emplace<fabrikk::render::cmp::Mesh>(e0, triangle_mesh);
+    auto e1 = reg.create();
+    reg.emplace<fabrikk::render::cmp::Mesh>(e1, triangle_mesh1);
+
+    app.simulation.emplace(fabrikk::SimulationPhase::Render,{
+        "fabrikk:render:render",
+        &fabrikk::render::sys::render,
+        0
+    });
 
     app.run();
 

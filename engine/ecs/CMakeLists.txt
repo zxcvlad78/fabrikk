@@ -1,7 +1,7 @@
 add_subdirectory(external/entt)
 
 add_library(fabrikk_ecs STATIC
-    src/sys/render.cpp
+    #src/sys/render.cpp
     src/Simulation.cpp
 )
 

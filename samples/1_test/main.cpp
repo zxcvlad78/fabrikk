@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <fabrikk/render/Mesh.hpp>
-
+#include <memory>
 
 float vertices[] = {
     -0.5f, -0.5f, 0.0f,
