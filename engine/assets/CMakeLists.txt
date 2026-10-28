@@ -1,4 +1,3 @@
-add_subdirectory(external/glm)
 
 add_library(fabrikk_assets STATIC
     #src/gltf.cpp

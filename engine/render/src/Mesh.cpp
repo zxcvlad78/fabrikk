@@ -6,7 +6,7 @@ namespace fabrikk {
 void Mesh::use_shader() const {
     if (shader_program_ == 0) return;
     glUseProgram(shader_program_);
-    GLint color_i = glGetUniformLocation(shader_program_, "uColor");
+    GLint color_i = glGetUniformLocation(shader_program_, "fuColor");
     if (color_i < 0) return; 
     glUniform4f(color_i, color_.x, color_.y, color_.z, color_.w);
 }

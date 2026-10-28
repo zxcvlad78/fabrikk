@@ -9,24 +9,21 @@
 const char *vss =
     "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
+    "uniform mat4 fuTransform;\n"
     "void main()\n"
     "{\n"
-    "    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "    gl_Position = fuTransform * vec4(aPos, 1.0f);\n"
     "}\0";
 
 const char *fss =
     "#version 330 core\n"
     "out vec4 FragColor;\n"
-    "uniform vec4 uColor;\n"
+    "uniform vec4 fuColor;\n"
     "void main()\n"
     "{\n"
-    "    FragColor = uColor;\n"
+    "    FragColor = fuColor;\n"
     "}\0";
 
-void gl_setup() {
-    //glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-}
 
 int main() {
     fabrikk::App app("app_test");
@@ -48,16 +45,16 @@ int main() {
          0.5f,  0.5f, 0.0f
     });
     triangle_mesh1->shader_program(shader_program);
-    triangle_mesh1->color({1.f, 0.1f, 0.8f, 0.78f});
+    triangle_mesh1->color({1.f, 0.1f, 0.8f, 0.5f});
 
     app.simulation.emplace(
         fabrikk::SimulationPhase::Render,
-        [&triangle_mesh, &triangle_mesh1]() {
-            triangle_mesh->draw();
-            triangle_mesh1->draw();
-        },
-        "app_test:render"
-    );
+        {"app_test:render",
+            [&triangle_mesh, &triangle_mesh1](entt::registry& reg) {
+                triangle_mesh->draw();
+                triangle_mesh1->draw();
+            }
+        });
 
     app.run();
 

@@ -10,8 +10,6 @@ namespace fabrikk {
 App::App(const std::string& name)
 : name_(std::move(name)) {
     window_ = new Window(1280, 720, name.c_str());
-    auto& sim_ctx = simulation.registry().ctx().emplace<ctx::SimulationContext>();
-
     auto& app_ctx = simulation.registry().ctx().emplace<ctx::AppContext>();
     app_ctx.window = window_;
 }
@@ -29,7 +27,6 @@ App& App::run() {
 
     while (!window_->should_close() && !should_quit_) {
         window_->poll_events();
-        simulation.run(SimulationPhase::Input); // run phase
 
         if (window_->was_resized()) {
             int w = 0;
@@ -43,10 +40,13 @@ App& App::run() {
 
         const auto now = clock::now();
         const f64 frame_dt = std::chrono::duration<f64>(now - previous).count();
+        
+        sim_ctx.dt = frame_dt;
         previous = now;
+
+        simulation.run(SimulationPhase::Input); // run phase
         
         accumulator += frame_dt > 0.25 ? 0.25 : frame_dt;
-
         while (accumulator >= sim_ctx.fixed_dt) {
             simulation.run(SimulationPhase::FixedUpdate); // run phase
             simulation.tick_next();

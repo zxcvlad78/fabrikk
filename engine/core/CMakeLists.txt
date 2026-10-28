@@ -1,3 +1,4 @@
+add_subdirectory(external/glm)
 
 add_library(fabrikk_core STATIC
     src/core.cpp
