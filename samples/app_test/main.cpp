@@ -5,7 +5,7 @@
 #include <fabrikk/render/ShaderProgram.hpp>
 #include <iostream>
 #include <vector>
-#include <fabrikk/render/Mesh.hpp>
+#include <fabrikk/ecs/ctx/SimulationContext.hpp>
 #include <fabrikk/render/cmp/Mesh.hpp>
 
 const char *vss =
@@ -31,33 +31,39 @@ int main() {
     fabrikk::App app("app_test");
 
     auto shader_program = fabrikk::ShaderProgram::create(vss, fss);
-
-    auto triangle_mesh = std::make_shared<fabrikk::Mesh>(std::vector<float>{
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
-    });
-    
-    triangle_mesh->shader_program(shader_program);
-    triangle_mesh->color({1.f, 0.5f, 0.4f,  0.5f});
-
-    auto triangle_mesh1 = std::make_shared<fabrikk::Mesh>(std::vector<float>{
+    std::vector<float> triangle_vertices1 = {
          0.0f,  0.5f, 0.0f,
         -0.5f, -0.5f, 0.0f,
          0.5f,  0.5f, 0.0f
-    });
-    triangle_mesh1->shader_program(shader_program);
-    triangle_mesh1->color({1.f, 0.1f, 0.8f, 0.5f});
+    };
+    
 
     auto& reg = app.simulation.registry();
+    
     auto e0 = reg.create();
-    reg.emplace<fabrikk::render::cmp::Mesh>(e0, triangle_mesh);
-    auto e1 = reg.create();
-    reg.emplace<fabrikk::render::cmp::Mesh>(e1, triangle_mesh1);
+    auto& triangle_tr1 = reg.emplace<fabrikk::ecs::cmp::Transform>(e0);
+    auto& triangle_mesh1 = reg.emplace<fabrikk::render::cmp::Mesh>(e0, triangle_vertices1);
+    auto& triangle_mat1 = reg.emplace<fabrikk::render::cmp::Material>(e0, shader_program);
+    triangle_mat1.albedo_color.a = 0.5f;
 
     app.simulation.emplace(fabrikk::SimulationPhase::Render,{
         "fabrikk:render:render",
         &fabrikk::render::sys::render,
+        0
+    });
+
+    app.simulation.emplace(fabrikk::SimulationPhase::Render,{
+        "fabrikk:render:test",
+        [](entt::registry& reg) {
+            double dt = reg.ctx().get<fabrikk::ctx::SimulationContext>().dt;
+            for(auto [e, tr] : reg.view<fabrikk::ecs::cmp::Transform>().each()) {
+                tr.position.x += 0.1 * dt;
+                tr.rotation.z += 1.0 * dt;
+            }
+            for(auto [e, mat] : reg.view<fabrikk::render::cmp::Material>().each()) {
+                //mat.albedo_color.w -= 0.1 * dt;
+            }
+        },
         0
     });
 

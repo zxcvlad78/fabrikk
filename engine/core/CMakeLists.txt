@@ -9,3 +9,7 @@ target_include_directories(fabrikk_core PUBLIC
 )
 
 fabrikk_set_target_options(fabrikk_core)
+
+target_link_libraries(fabrikk_core PUBLIC
+    glm::glm
+)

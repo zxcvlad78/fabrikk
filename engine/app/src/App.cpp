@@ -9,7 +9,7 @@
 namespace fabrikk {
 App::App(const std::string& name)
 : name_(std::move(name)) {
-    window_ = new Window(1280, 720, name.c_str());
+    window_ = new Window(800, 800, name.c_str());
     auto& app_ctx = simulation.registry().ctx().emplace<ctx::AppContext>();
     app_ctx.window = window_;
 }
