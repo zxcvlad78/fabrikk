@@ -2,7 +2,7 @@
 #include <vector>
 #include <glad/glad.h>
 
-namespace fabrikk::render::cmp {
+namespace fabrikk::cmp {
 struct Mesh {
     std::vector<float> vertices;
     bool               vertices_dirty = true;

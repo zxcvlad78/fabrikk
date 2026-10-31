@@ -2,7 +2,7 @@
 
 class Window;
 
-namespace fabrikk::ctx {
+namespace fabrikk {
 struct AppContext {
     Window* window;
 };

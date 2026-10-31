@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-namespace fabrikk::render::cmp {
+namespace fabrikk::cmp {
 struct Material {
     GLuint    shader_program = 0;
 

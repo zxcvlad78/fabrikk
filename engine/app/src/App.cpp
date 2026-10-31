@@ -2,15 +2,15 @@
 #include <GLFW/glfw3.h>
 #include <fabrikk/app/App.hpp>
 #include <chrono>
-#include <fabrikk/app/ctx/AppContext.hpp>
-#include <fabrikk/ecs/ctx/SimulationContext.hpp>
+#include <fabrikk/app/AppContext.hpp>
+#include <fabrikk/ecs/SimulationContext.hpp>
 
 
 namespace fabrikk {
 App::App(const std::string& name)
 : name_(std::move(name)) {
     window_ = new Window(800, 800, name.c_str());
-    auto& app_ctx = simulation.registry().ctx().emplace<ctx::AppContext>();
+    auto& app_ctx = simulation.registry().ctx().emplace<AppContext>();
     app_ctx.window = window_;
 }
 
@@ -23,7 +23,7 @@ App& App::run() {
     auto previous = clock::now();
     f64 accumulator = 0.0;
 
-    auto& sim_ctx = simulation.registry().ctx().get<ctx::SimulationContext>();
+    auto& sim_ctx = simulation.registry().ctx().get<SimulationContext>();
 
     while (!window_->should_close() && !should_quit_) {
         window_->poll_events();

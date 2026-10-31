@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace fabrikk::ecs::cmp {
+namespace fabrikk::cmp {
 struct Transform {
     glm::vec3 position{0.0f};
     glm::vec3 rotation{0.0f};

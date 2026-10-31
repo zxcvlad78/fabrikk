@@ -1,15 +1,15 @@
 #pragma once
 
-#include <fabrikk/ecs/cmp/Transform.hpp>
-#include <fabrikk/render/cmp/Mesh.hpp>
-#include <fabrikk/render/cmp/Material.hpp>
+#include <fabrikk/cmp/Transform.hpp>
+#include <fabrikk/cmp/Mesh.hpp>
+#include <fabrikk/cmp/Material.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 namespace {
 void set_uniforms(
-    fabrikk::ecs::cmp::Transform& tr,
-    fabrikk::render::cmp::Mesh& mesh,
-    fabrikk::render::cmp::Material& mat
+    fabrikk::cmp::Transform& tr,
+    fabrikk::cmp::Mesh& mesh,
+    fabrikk::cmp::Material& mat
 ) {
     GLint color_id = glGetUniformLocation(mat.shader_program, "fuColor");
     if (color_id >= 0) {
