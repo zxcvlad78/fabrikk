@@ -1,5 +1,5 @@
 #include <fabrikk/ecs/Simulation.hpp>
-#include <fabrikk/ecs/ctx/SimulationContext.hpp>
+#include <fabrikk/ecs/SimulationContext.hpp>
 
 #include <algorithm>
 #include <iostream>
@@ -24,7 +24,7 @@ void Simulation::auto_register(SimulationPhase p, std::string id, int prio, std:
 }
 
 Simulation::Simulation() {
-    reg_.ctx().emplace<ctx::SimulationContext>();
+    reg_.ctx().emplace<SimulationContext>();
     sync_auto_systems();
 }
 

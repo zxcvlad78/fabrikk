@@ -29,10 +29,10 @@ void set_uniforms(
 }
 }
 
-namespace fabrikk::render::sys {
+namespace fabrikk::sys {
 inline void render(entt::registry& reg) {
     GLuint last_shader_program = 0;
-    auto view = reg.view<ecs::cmp::Transform, cmp::Mesh, cmp::Material>();
+    auto view = reg.view<cmp::Transform, cmp::Mesh, cmp::Material>();
 
     for (auto [e, tr, mesh, mat] : view.each()) {
         if (mat.shader_program == 0) continue;

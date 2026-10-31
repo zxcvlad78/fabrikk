@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <glad/glad.h>
 
 namespace fabrikk::render::cmp {
 struct Mesh {
