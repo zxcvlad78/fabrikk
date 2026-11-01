@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <fabrikk/app/App.hpp>
 #include <fabrikk/sys/render.hpp>
-#include <fabrikk/render/ShaderProgram.hpp>
+#include <fabrikk/graphics/ShaderProgram.hpp>
 #include <iostream>
 #include <vector>
 #include <fabrikk/ecs/SimulationContext.hpp>
@@ -71,8 +71,8 @@ int main() {
         [](entt::registry& reg) {
             double dt = reg.ctx().get<fabrikk::SimulationContext>().dt;
             for(auto [e, tr] : reg.view<fabrikk::cmp::Transform>().each()) {
-                tr.position.x += 0.05 * dt;
-                tr.rotation.z += 0.15 * dt;
+                tr.position.x += static_cast<float>(0.05 * dt);
+                tr.rotation.z += static_cast<float>(0.15 * dt);
             }
             for(auto [e, mat] : reg.view<fabrikk::cmp::Material>().each()) {
                 //mat.albedo_color.w -= 0.1 * dt;

@@ -12,5 +12,5 @@ target_link_libraries(fabrikk_app PUBLIC
     fabrikk_core
     fabrikk_ecs
     fabrikk_platform
-    fabrikk_render
+    fabrikk_graphics
 )

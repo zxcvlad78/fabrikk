@@ -16,8 +16,6 @@ target_include_directories(fabrikk_assets SYSTEM PRIVATE
 
 fabrikk_set_target_options(fabrikk_assets)
 
-target_link_libraries(fabrikk_assets
-    PUBLIC
-        fabrikk_core
-        fabrikk_render
+target_link_libraries(fabrikk_assets PUBLIC
+    fabrikk_core
 )

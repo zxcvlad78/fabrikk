@@ -1,6 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <fabrikk/render/ShaderProgram.hpp>
+#include <fabrikk/graphics/ShaderProgram.hpp>
 #include <vector>
 #include <iostream>
 
