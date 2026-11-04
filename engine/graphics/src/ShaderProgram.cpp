@@ -82,6 +82,9 @@ void use(unsigned int program) {
 void set_uniform(const char* n, const glm::mat4& m) {
     glUniformMatrix4fv(loc(n), 1, GL_FALSE, glm::value_ptr(m));
 }
+void set_uniform(const char* n, const glm::vec4& v) {
+    glUniform4fv(loc(n), 1, glm::value_ptr(v));
+}
 void set_uniform(const char* n, const glm::vec3& v) {
     glUniform3fv(loc(n), 1, glm::value_ptr(v));
 }

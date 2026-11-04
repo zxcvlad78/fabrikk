@@ -54,10 +54,6 @@ App& App::run() {
         }
 
         simulation.run(SimulationPhase::Update); // run phase
-
-        glClearColor(0.f, 0.f, 0.f, 1.f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
         simulation.run(SimulationPhase::Render); // run phase
         simulation.run(SimulationPhase::PostRender); // run phase
     

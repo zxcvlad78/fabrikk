@@ -2,6 +2,7 @@
 add_library(fabrikk_assets STATIC
     #src/gltf.cpp
     src/pak.cpp
+    src/FileSystem.cpp
     #src/FileWatcher.cpp
 )
 

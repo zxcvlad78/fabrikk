@@ -1,46 +1,22 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <fabrikk/app/App.hpp>
-#include <fabrikk/sys/render.hpp>
-#include <fabrikk/sys/camera.hpp>
-#include <fabrikk/graphics/ShaderProgram.hpp>
 #include <iostream>
 #include <vector>
+#include <fabrikk/app/App.hpp>
+#include <fabrikk/sys/render.hpp>
+#include <fabrikk/sys/viewport.hpp>
+#include <fabrikk/graphics/ShaderProgram.hpp>
+#include <fabrikk/graphics/shaders/default.hpp>
 #include <fabrikk/ecs/SimulationContext.hpp>
+
+#include <fabrikk/cmp/Transform.hpp>
 #include <fabrikk/cmp/Mesh.hpp>
-
-const char *vss =
-    "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "layout (location = 1) in vec3 aNormal;\n"
-    "layout (location = 2) in vec2 aUV;\n"
-
-    "uniform mat4 uModel;\n"
-    "uniform mat4 uView;\n"
-    "uniform mat4 uProjection;\n"
-
-    "void main()\n"
-    "{\n"
-        "vec4 worldPos = uModel * vec4(aPos, 1.0);\n"
-        "vNormalWS = mat3(transpose(inverse(uModel))) * aNormal;\n"
-        "vUV = aUV;\n"
-        "gl_Position = uProjection * uView * worldPos;\n"
-    "}\0";
-
-const char *fss =
-    "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "uniform vec4 fuColor;\n"
-    "void main()\n"
-    "{\n"
-        "FragColor = fuColor;\n"
-    "}\0";
-
+#include <fabrikk/cmp/Material.hpp>
 
 int main() {
     fabrikk::App app("app_test");
 
-    auto shader_program = fabrikk::ShaderProgram::create(vss, fss);
+    auto shader_program = fabrikk::ShaderProgram::create(kFabrikkDefaultVertexShader, kFabrikkDefaultFragmentShader);
     std::vector<float> triangle_vertices0 = {
          0.0f,  0.5f, 0.0f,
         -0.5f, -0.5f, 0.0f,
@@ -56,6 +32,10 @@ int main() {
 
     auto& reg = app.simulation.registry();
     
+    auto e_cam = reg.create();
+    reg.emplace<fabrikk::cmp::Camera>(e_cam);
+    reg.emplace<fabrikk::cmp::Transform>(e_cam);
+
     auto e0 = reg.create();
     auto& triangle_tr0 = reg.emplace<fabrikk::cmp::Transform>(e0);
     auto& triangle_mesh0 = reg.emplace<fabrikk::cmp::Mesh>(e0, triangle_vertices0);
@@ -64,7 +44,7 @@ int main() {
 
     auto e1 = reg.create();
     auto& triangle_tr1 = reg.emplace<fabrikk::cmp::Transform>(e1);
-    triangle_tr1.position.y = -0.5f;
+    //triangle_tr1.position.y = -0.5f;
     triangle_tr1.rotation.z = 25.f;
     auto& triangle_mesh1 = reg.emplace<fabrikk::cmp::Mesh>(e1, triangle_vertices1);
     auto& triangle_mat1 = reg.emplace<fabrikk::cmp::Material>(e1, shader_program);
@@ -72,7 +52,7 @@ int main() {
 
     app.simulation.emplace(fabrikk::SimulationPhase::Update,{
         "fabrikk:render:camera",
-        &fabrikk::sys::camera,
+        &fabrikk::sys::viewport,
         0
     });
 
