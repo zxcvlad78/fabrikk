@@ -13,6 +13,5 @@ fabrikk_set_target_options(fabrikk_graphics)
 target_link_libraries(fabrikk_graphics PUBLIC
     fabrikk_core
     fabrikk_platform
-    EnTT::EnTT
     OpenGL::GL
 )

@@ -3,7 +3,9 @@
 #include <fabrikk/cmp/Transform.hpp>
 #include <fabrikk/cmp/Mesh.hpp>
 #include <fabrikk/cmp/Material.hpp>
+#include <fabrikk/cmp/Camera.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <entt/entity/registry.hpp>
 
 namespace {
 void set_uniforms(
@@ -34,6 +36,16 @@ inline void render(entt::registry& reg) {
     GLuint last_shader_program = 0;
     auto view = reg.view<cmp::Transform, cmp::Mesh, cmp::Material>();
 
+    glm::mat4 cam_view{1.0f}, cam_proj{1.0f};
+    auto view_cam = reg.view<cmp::Transform, cmp::Camera>();
+    for (auto [e, tr, cam] : view_cam.each()) {
+        cam_view = cam.view(tr.matrix());
+        cam_proj = cam.projection();
+        break;
+    }
+
+    glm::mat4 projection = cam_proj * cam_view;
+
     for (auto [e, tr, mesh, mat] : view.each()) {
         if (mat.shader_program == 0) continue;
 
@@ -52,22 +64,20 @@ inline void render(entt::registry& reg) {
         }
 
         if (mesh.vertex_count <= 0) continue;
+        if (!mat.shader_program) continue;
 
-        if (mat.shader_program != last_shader_program) {
-            glUseProgram(mat.shader_program);
-            last_shader_program = mat.shader_program;
-        }
+        ShaderProgram::use(mat.shader_program);
+        ShaderProgram::set_uniform("uView", cam_view);
+        ShaderProgram::set_uniform("uProjection", projection);
+        ShaderProgram::set_uniform("uModel", tr.matrix());
+        ShaderProgram::set_uniform("uBaseColor", mat.albedo_color);
 
         if (mat.blend_use) {
             glEnable(GL_BLEND);
             glBlendFunc(mat.blend_sfactor, mat.blend_dfactor);
-            printf("%f\n", mat.albedo_color.a);
         } else glDisable(GL_BLEND);
 
-        set_uniforms(tr, mesh, mat);
-
         glDrawArrays(GL_TRIANGLES, 0, mesh.vertex_count);
-        printf("draw\n");
     }
 
     glBindVertexArray(0);

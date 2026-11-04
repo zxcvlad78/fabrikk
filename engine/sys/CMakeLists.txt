@@ -10,5 +10,6 @@ fabrikk_set_target_options(fabrikk_sys)
 
 target_link_libraries(fabrikk_sys PUBLIC
     fabrikk_ecs
+    fabrikk_app
     fabrikk_cmp
 )

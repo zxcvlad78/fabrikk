@@ -1,10 +1,25 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/gtc/type_ptr.hpp>
 #include <fabrikk/graphics/ShaderProgram.hpp>
 #include <vector>
 #include <iostream>
 
-namespace fabrikk {
+namespace {
+    thread_local GLuint current_program = 0;
+    std::unordered_map<GLuint, std::unordered_map<std::string, GLint>> loc_cache;
+
+    GLint loc(const char* name) {
+        auto& m = loc_cache[current_program];
+        auto it = m.find(name);
+        if (it != m.end()) return it->second;
+        GLint l = glGetUniformLocation(current_program, name);
+        m.emplace(name, l);
+        return l;
+    }
+}
+
+namespace fabrikk::ShaderProgram {
 GLuint compile_shader(GLenum type, const char* src) {
     GLuint sh = glCreateShader(type);
     glShaderSource(sh, 1, &src, NULL);
@@ -24,7 +39,7 @@ GLuint compile_shader(GLenum type, const char* src) {
     return sh;
 }
 
-GLuint ShaderProgram::create(const char* vss, const char* fss) {
+GLuint create(const char* vss, const char* fss) {
     GLuint vs = compile_shader(GL_VERTEX_SHADER, vss);
     GLuint fs = compile_shader(GL_FRAGMENT_SHADER, fss);
 
@@ -51,5 +66,29 @@ GLuint ShaderProgram::create(const char* vss, const char* fss) {
     glDeleteShader(fs);
 
     return sp;
+}
+
+void destroy(unsigned int program) {
+    loc_cache.erase(program);
+    if (current_program == program) current_program = 0;
+    glDeleteProgram(program);
+}
+
+void use(unsigned int program) {
+    glUseProgram(program);
+    current_program = program;
+}
+
+void set_uniform(const char* n, const glm::mat4& m) {
+    glUniformMatrix4fv(loc(n), 1, GL_FALSE, glm::value_ptr(m));
+}
+void set_uniform(const char* n, const glm::vec3& v) {
+    glUniform3fv(loc(n), 1, glm::value_ptr(v));
+}
+void set_uniform(const char* n, float v) {
+    glUniform1f(loc(n), v);
+}
+void set_uniform(const char* n, int v) {
+    glUniform1i(loc(n), v);
 }
 }

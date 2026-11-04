@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <fabrikk/app/App.hpp>
 #include <fabrikk/sys/render.hpp>
+#include <fabrikk/sys/camera.hpp>
 #include <fabrikk/graphics/ShaderProgram.hpp>
 #include <iostream>
 #include <vector>
@@ -11,10 +12,19 @@
 const char *vss =
     "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
-    "uniform mat4 fuTransform;\n"
+    "layout (location = 1) in vec3 aNormal;\n"
+    "layout (location = 2) in vec2 aUV;\n"
+
+    "uniform mat4 uModel;\n"
+    "uniform mat4 uView;\n"
+    "uniform mat4 uProjection;\n"
+
     "void main()\n"
     "{\n"
-    "    gl_Position = fuTransform * vec4(aPos, 1.0f);\n"
+        "vec4 worldPos = uModel * vec4(aPos, 1.0);\n"
+        "vNormalWS = mat3(transpose(inverse(uModel))) * aNormal;\n"
+        "vUV = aUV;\n"
+        "gl_Position = uProjection * uView * worldPos;\n"
     "}\0";
 
 const char *fss =
@@ -23,7 +33,7 @@ const char *fss =
     "uniform vec4 fuColor;\n"
     "void main()\n"
     "{\n"
-    "    FragColor = fuColor;\n"
+        "FragColor = fuColor;\n"
     "}\0";
 
 
@@ -60,9 +70,9 @@ int main() {
     auto& triangle_mat1 = reg.emplace<fabrikk::cmp::Material>(e1, shader_program);
     triangle_mat1.albedo_color = { 0.f, 1.f, 0.f, .5f };
 
-    app.simulation.emplace(fabrikk::SimulationPhase::Render,{
-        "fabrikk:render:render",
-        &fabrikk::sys::render,
+    app.simulation.emplace(fabrikk::SimulationPhase::Update,{
+        "fabrikk:render:camera",
+        &fabrikk::sys::camera,
         0
     });
 
@@ -70,14 +80,20 @@ int main() {
         "fabrikk:render:test",
         [](entt::registry& reg) {
             double dt = reg.ctx().get<fabrikk::SimulationContext>().dt;
-            for(auto [e, tr] : reg.view<fabrikk::cmp::Transform>().each()) {
+            for(auto [e, tr, cam] : reg.view<fabrikk::cmp::Transform, fabrikk::cmp::Camera>().each()) {
+                tr.position.y += static_cast<float>(0.05 * dt);
+            }
+            for(auto [e, tr, mesh] : reg.view<fabrikk::cmp::Transform, fabrikk::cmp::Mesh>().each()) {
                 tr.position.x += static_cast<float>(0.05 * dt);
                 tr.rotation.z += static_cast<float>(0.15 * dt);
             }
-            for(auto [e, mat] : reg.view<fabrikk::cmp::Material>().each()) {
-                //mat.albedo_color.w -= 0.1 * dt;
-            }
         },
+        0
+    });
+
+    app.simulation.emplace(fabrikk::SimulationPhase::Render,{
+        "fabrikk:render:render",
+        &fabrikk::sys::render,
         0
     });
 
